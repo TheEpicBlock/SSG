@@ -1,7 +1,11 @@
 package community.fabricmc.ssg.builders
 
+import java.io.File
+
 public class SSGBuilder {
-    public lateinit var templates: String
+    public lateinit var templatePath: String
+    public lateinit var defaultTemplate: String
+
     public val sections: MutableMap<String, String> = mutableMapOf()
 
     public fun section(name: String, path: String) {
@@ -13,8 +17,16 @@ public class SSGBuilder {
     }
 
     public fun validate() {
-        if (!::templates.isInitialized) {
-            error("Templates directory must be specified.")
+        if (!::templatePath.isInitialized) {
+            error("Template path must be specified.")
+        }
+
+        if (!::defaultTemplate.isInitialized) {
+            error("Default template name must be specified.")
+        }
+
+        if (!File(templatePath).exists()) {
+            error("No such template path: $templatePath")
         }
     }
 }

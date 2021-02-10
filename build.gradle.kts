@@ -17,6 +17,7 @@ dependencies {
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1")
 
     implementation("com.charleskorn.kaml:kaml:0.27.0")
     implementation("io.pebbletemplates:pebble:3.1.4")
@@ -29,6 +30,13 @@ detekt {
 
 kotlin {
     explicitApi()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.contracts.ExperimentalContracts"
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
