@@ -5,6 +5,9 @@ plugins {
     kotlin("plugin.serialization") version "1.4.30"
 }
 
+version = "1.0.0-SNAPSHOT"
+group = "community.fabricmc.ssg"
+
 repositories {
     jcenter()
 }

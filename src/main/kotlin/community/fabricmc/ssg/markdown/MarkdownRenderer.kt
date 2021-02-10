@@ -18,7 +18,7 @@ import com.vladsch.flexmark.util.data.DataSet
 import com.vladsch.flexmark.util.data.MutableDataSet
 import com.vladsch.flexmark.util.misc.Extension
 
-public class MarkdownRenderer(sectionRoot: String) {
+public object MarkdownRenderer {
     private var settings: DataSet = MutableDataSet()
         .set(HtmlRenderer.GENERATE_HEADER_ID, true)
 
@@ -42,7 +42,5 @@ public class MarkdownRenderer(sectionRoot: String) {
     public val parser: Parser = Parser.builder(settings).extensions(extensions).build()
     public val renderer: HtmlRenderer = HtmlRenderer.builder(settings).extensions(extensions).build()
 
-    public fun render() {
-
-    }
+//    public fun render() {}
 }
