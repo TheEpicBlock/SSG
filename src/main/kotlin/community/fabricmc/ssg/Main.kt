@@ -26,7 +26,7 @@ public class Main : CliktCommand(
         .required()
 
     public val outputPath: File by option(help = "Generated output path")
-        .file(mustExist = false, canBeFile = false, mustBeWritable = true)
+        .file(mustExist = false, canBeFile = false)
         .required()
 
     public val sourcesPath: File by option(help = "Sources path")
