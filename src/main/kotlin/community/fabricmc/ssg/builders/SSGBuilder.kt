@@ -2,7 +2,9 @@ package community.fabricmc.ssg.builders
 
 import com.github.slugify.Slugify
 import java.io.File
+import kotlin.io.path.*
 
+@OptIn(ExperimentalPathApi::class)
 public class SSGBuilder {
     public lateinit var defaultTemplate: String
 
@@ -41,6 +43,14 @@ public class SSGBuilder {
 
         if (!File(templatePath).exists()) {
             error("No such template path: $templatePath")
+        }
+
+        sections.forEach { section ->
+            val path = Path(sourcesPath) / section
+
+            if (!path.exists() || !path.isDirectory()) {
+                error("Unable to find section: $section")
+            }
         }
     }
 }

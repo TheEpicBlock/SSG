@@ -1,14 +1,16 @@
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.16.0-RC1")
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.gitlab.arturbosch.detekt") version "1.16.0-RC1"
 
     kotlin("jvm") version "1.4.30"
     kotlin("plugin.serialization") version "1.4.30"
 
+    application
     `maven-publish`
 }
 
-version = "1.0.0-SNAPSHOT"
 group = "community.fabricmc.ssg"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     jcenter()
@@ -23,8 +25,13 @@ dependencies {
 
     implementation("com.charleskorn.kaml:kaml:0.27.0")
     implementation("com.github.slugify:slugify:2.4")
-    implementation("io.pebbletemplates:pebble:3.1.4")
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
     implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
+    implementation("io.pebbletemplates:pebble:3.1.4")
+}
+
+application {
+    mainClassName ="community.fabricmc.ssg.MainKt"
 }
 
 detekt {
@@ -59,6 +66,18 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     // Target version of the generated JVM bytecode. It is used for type resolution.
     this.jvmTarget = "1.8"
+}
+
+tasks.withType<Jar>().configureEach {
+    manifest {
+        attributes["Main-Class"] = "community.fabricmc.ssg.MainKt"
+    }
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>().configureEach {
+    manifest {
+        attributes["Main-Class"] = "community.fabricmc.ssg.MainKt"
+    }
 }
 
 publishing {

@@ -147,6 +147,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             val settings = SSGBuilder()
 
             builder(settings)
+            settings.validate()
 
             return SSG(settings)
         }
