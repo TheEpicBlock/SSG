@@ -1,24 +1,38 @@
 package community.fabricmc.ssg.builders
 
+import com.github.slugify.Slugify
 import java.io.File
 
 public class SSGBuilder {
-    public lateinit var templatePath: String
     public lateinit var defaultTemplate: String
 
-    public val sections: MutableMap<String, String> = mutableMapOf()
+    public lateinit var outputPath: String
+    public lateinit var sourcesPath: String
+    public lateinit var templatePath: String
 
-    public fun section(name: String, path: String) {
-        if (sections.containsKey(name)) {
+    private val slugify = Slugify()
+
+    public val sections: MutableList<String> = mutableListOf()
+
+    public fun section(name: String) {
+        if (sections.contains(name)) {
             error("Section already registered: $name")
         }
 
-        sections[name] = path
+        sections.add(slugify.slugify(name))
     }
 
     public fun validate() {
         if (!::templatePath.isInitialized) {
             error("Template path must be specified.")
+        }
+
+        if (!::sourcesPath.isInitialized) {
+            error("Sources path must be specified.")
+        }
+
+        if (!::outputPath.isInitialized) {
+            error("Output path must be specified.")
         }
 
         if (!::defaultTemplate.isInitialized) {

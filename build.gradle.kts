@@ -20,6 +20,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1")
 
     implementation("com.charleskorn.kaml:kaml:0.27.0")
+    implementation("com.github.slugify:slugify:2.4")
     implementation("io.pebbletemplates:pebble:3.1.4")
     implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
 }

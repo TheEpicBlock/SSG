@@ -18,7 +18,9 @@ import com.vladsch.flexmark.util.data.DataSet
 import com.vladsch.flexmark.util.data.MutableDataSet
 import com.vladsch.flexmark.util.misc.Extension
 import community.fabricmc.ssg.SSG
+import community.fabricmc.ssg.navigation.Root
 import java.io.StringWriter
+import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.readText
@@ -29,7 +31,7 @@ public class MarkdownRenderer(private val ssg: SSG) {
         .set(HtmlRenderer.GENERATE_HEADER_ID, true)
         .toImmutable()
 
-    private val yaml = Yaml()
+    private val yaml: Yaml get() = ssg.yaml
 
     private var extensions: MutableList<Extension> = mutableListOf(
         AbbreviationExtension.create(),
@@ -48,9 +50,8 @@ public class MarkdownRenderer(private val ssg: SSG) {
     public val parser: Parser = Parser.builder(settings).extensions(extensions).build()
     public val renderer: HtmlRenderer = HtmlRenderer.builder(settings).extensions(extensions).build()
 
-    public fun render(path: String): String {
-        val filePath = Path(path)
-        val text = filePath.readText(Charsets.UTF_8)
+    public fun render(path: Path, navigation: Root?): String {
+        val text = path.readText(Charsets.UTF_8)
 
         var lines = text.lines()
         var frontMatter: FrontMatter? = null
@@ -87,11 +88,13 @@ public class MarkdownRenderer(private val ssg: SSG) {
         val markdown = markdownWriter.toString()
         val rendered = renderer.render(parser.parse(markdown))
 
-        // TODO: Extra template context
-
         val htmlTemplate = ssg.getTemplate(frontMatter.template ?: ssg.settings.defaultTemplate)
         val htmlWriter = StringWriter()
-        val htmlContext: Map<String, Any> = mapOf("body" to rendered)
+        val htmlContext: MutableMap<String, Any> = mutableMapOf("body" to rendered, "meta" to frontMatter)
+
+        if (navigation != null) {
+            htmlContext["navigation"] = navigation
+        }
 
         htmlTemplate.evaluate(htmlWriter, htmlContext)
 
