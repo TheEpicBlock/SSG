@@ -13,7 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.streams.toList
 
-private val ALLOWED_EXTENSIONS = arrayOf("html", "md")
+private val ALLOWED_EXTENSIONS = arrayOf("html", "md", "peb")
 
 @OptIn(ExperimentalPathApi::class)
 public class SSG private constructor(public val settings: SSGBuilder) {
@@ -30,7 +30,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
     private val templatePath = Path(settings.templatePath).relativeTo(Path("."))
 
     public fun getTemplate(name: String): PebbleTemplate {
-        val path = templatePath / "$name.peb.html"
+        val path = templatePath / "$name.html.peb"
 
         return pebble.getTemplate(path.toString())
     }
@@ -85,9 +85,11 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         }
 
         sources.forEach {
-            var relativePath = it.relativeTo(sourcesRoot).toString().substringBeforeLast(".")
+            var relativePath = it.relativeTo(sourcesRoot).toString()
 
             if (relativePath.endsWith(".peb")) {
+                relativePath = relativePath.substringBeforeLast(".").substringBeforeLast(".")
+            } else {
                 relativePath = relativePath.substringBeforeLast(".")
             }
 
@@ -99,7 +101,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 outputRoot / "$relativePath.html"
             }
 
-            val rendered = if (it.toString().endsWith(".peb.html")) {
+            val rendered = if (it.toString().endsWith(".html.peb")) {
                 outputPath = if (!relativePath.endsWith("index")) {
                     outputRoot / "$relativePath/index.html"
                 } else {
@@ -118,7 +120,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 template.evaluate(writer, context)
 
                 writer.toString()
-            } else if (it.extension == "md") {
+            } else if (it.extension == "md" || it.toString().endsWith(".md.peb")) {
                 markdown.render(it, navigation)
             } else {
                 it.readText(Charsets.UTF_8)
