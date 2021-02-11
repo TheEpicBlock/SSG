@@ -28,11 +28,25 @@ dependencies {
 }
 
 detekt {
+    buildUponDefaultConfig = true
     config = files("detekt.yml")
+
+    autoCorrect = true
 }
 
 kotlin {
     explicitApi()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+val sourceJar = task("sourceJar", Jar::class) {
+    dependsOn(tasks["classes"])
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -73,6 +87,12 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components.getByName("java"))
+
+            artifact(sourceJar)
         }
     }
+}
+
+tasks.build {
+    this.finalizedBy(sourceJar)
 }
