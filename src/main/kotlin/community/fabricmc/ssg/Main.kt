@@ -72,3 +72,5 @@ public class Main : CliktCommand(
         }
     }
 }
+
+public fun main(args: Array<String>): Unit = Main().main(args)
