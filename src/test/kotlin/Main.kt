@@ -7,6 +7,8 @@ fun main() {
         outputPath = "test/output"
         sourcesPath = "test"
         templatePath = "test/templates"
+
+        section("docs")
     }
 
     ssg.render()
