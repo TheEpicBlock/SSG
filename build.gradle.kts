@@ -3,6 +3,8 @@ plugins {
 
     kotlin("jvm") version "1.4.30"
     kotlin("plugin.serialization") version "1.4.30"
+
+    `maven-publish`
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -43,4 +45,34 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     // Target version of the generated JVM bytecode. It is used for type resolution.
     this.jvmTarget = "1.8"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "KotDis"
+
+            url = if (project.version.toString().contains("SNAPSHOT")) {
+                uri("https://maven.kotlindiscord.com/repository/maven-snapshots/")
+            } else {
+                uri("https://maven.kotlindiscord.com/repository/maven-releases/")
+            }
+
+            credentials {
+                username = project.findProperty("kotdis.user") as String?
+                    ?: System.getenv("KOTLIN_DISCORD_USER")
+
+                password = project.findProperty("kotdis.password") as String?
+                    ?: System.getenv("KOTLIN_DISCORD_PASSWORD")
+            }
+
+            version = project.version
+        }
+    }
+
+    publications {
+        create<MavenPublication>("maven") {
+            from(components.getByName("java"))
+        }
+    }
 }
