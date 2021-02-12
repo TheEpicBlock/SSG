@@ -52,7 +52,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         return walk.filter { it.extension in ALLOWED_EXTENSIONS }.toList()
     }
 
-    public fun getNavigation(section: String? = null): Root? {
+    public fun getNavigation(section: String? = null): Root {
         var sourcesRoot = Path(settings.sourcesPath)
 
         if (section != null) {
@@ -62,10 +62,19 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         val navigationFile = sourcesRoot / "navigation.yml"
 
         if (navigationFile.exists()) {
-            return yaml.decodeFromString(Root.serializer(), navigationFile.readText(Charsets.UTF_8))
+            try {
+                return yaml.decodeFromString(Root.serializer(), navigationFile.readText(Charsets.UTF_8))
+            } catch (e: Exception) {
+                val sectionText = if (section != null) {
+                    "/$section/"
+                } else {
+                    "/"
+                }
+                error("Failed to parse ${sectionText}navigation.yml: ${e.message ?: e}")
+            }
         }
 
-        return null
+        return Root(listOf())
     }
 
     public fun render(section: String?) {
@@ -73,7 +82,6 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         var sourcesRoot = Path(settings.sourcesPath)
 
         val sources = getSources(section)
-        val navigation = getNavigation(section)
 
         if (section != null) {
             outputRoot = outputRoot / section
@@ -100,6 +108,15 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             } else {
                 outputRoot / "$relativePath.html"
             }
+
+            val path = if (relativePath.endsWith("index")) {
+                relativePath.substringBeforeLast("index").trim('/')
+            } else {
+                relativePath.trim('/')
+            }
+
+            val slug = "/" + (((section ?: "") + "/$path").trim('/'))
+            val navigation = getNavigation(section).copy(currentPath = slug)
 
             val rendered = if (it.toString().endsWith(".html.peb")) {
                 outputPath = if (!relativePath.endsWith("index")) {

@@ -75,14 +75,22 @@ public class MarkdownRenderer(private val ssg: SSG) {
                 }
             }
 
-            frontMatter = yaml.decodeFromString(FrontMatter.serializer(), yamlList.joinToString("\n"))
+            try {
+                frontMatter = yaml.decodeFromString(FrontMatter.serializer(), yamlList.joinToString("\n"))
+            } catch (e: Exception) {
+                error("Failed to parse front matter for $path: ${e.message ?: e}")
+            }
         }
 
         frontMatter ?: error("Front matter is required for all pages.")
 
         val markdownTemplate = ssg.getStringTemplate(lines.joinToString("\n"))
         val markdownWriter = StringWriter()
-        val markdownContext: Map<String, Any> = mapOf("meta" to frontMatter)
+        val markdownContext: MutableMap<String, Any> = mutableMapOf("meta" to frontMatter)
+
+        if (navigation != null) {
+            markdownContext["navigation"] = navigation
+        }
 
         markdownTemplate.evaluate(markdownWriter, markdownContext)
 

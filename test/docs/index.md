@@ -1,6 +1,8 @@
 ---
-title: Index
+title: Docs | Index
 ---
 # BODY HEADER
 
-Hello, this is the index page!
+**Navigation:** `{{ navigation | raw }}`
+
+Hello, this is the docs index page!

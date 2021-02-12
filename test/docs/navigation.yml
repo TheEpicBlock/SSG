@@ -1,0 +1,10 @@
+nodes:
+  - title: "One"
+    path: "/one"
+
+  - title: "Two"
+    path: "/two"
+
+    children:
+      - title: "Three"
+        path: "/two/three"
