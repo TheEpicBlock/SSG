@@ -8,7 +8,7 @@ public data class Node(
     val title: String,
 
     val children: List<Node> = listOf(),
-    val description: String = ""
+    val description: String? = null
 ) {
     override fun toString(): String =
         "Node(path = \"$path\", title = \"$title\", children = [${children.joinToString(", ")}])"
