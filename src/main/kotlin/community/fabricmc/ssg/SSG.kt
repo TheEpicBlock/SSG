@@ -20,10 +20,6 @@ public class SSG private constructor(public val settings: SSGBuilder) {
     private val pebble = PebbleEngine.Builder()
         .build()
 
-    private val stringPebble = PebbleEngine.Builder()
-        .loader(StringLoader())
-        .build()
-
     public val yaml: Yaml = Yaml()
     private val markdown = MarkdownRenderer(this)
 
@@ -35,8 +31,17 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         return pebble.getTemplate(path.toString())
     }
 
-    public fun getStringTemplate(template: String): PebbleTemplate =
-        stringPebble.getTemplate(template)
+    public fun getStringTemplate(template: String): PebbleTemplate {
+        val tempFile = templatePath / "TEMP.html.peb"
+
+        tempFile.writeText(template, Charsets.UTF_8)
+
+        val templateObj = getTemplate("TEMP")
+
+        tempFile.deleteIfExists()
+
+        return templateObj
+    }
 
     public fun getSources(section: String? = null): List<Path> {
         var sourcesRoot = Path(settings.sourcesPath)
