@@ -75,6 +75,7 @@ public class MarkdownRenderer(private val ssg: SSG) {
                 }
             }
 
+            @Suppress("TooGenericExceptionCaught")
             try {
                 frontMatter = yaml.decodeFromString(FrontMatter.serializer(), yamlList.joinToString("\n"))
             } catch (e: Exception) {

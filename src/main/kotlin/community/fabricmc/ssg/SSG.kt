@@ -61,6 +61,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
         val navigationFile = sourcesRoot / "navigation.yml"
 
+        @Suppress("TooGenericExceptionCaught")
         if (navigationFile.exists()) {
             try {
                 return yaml.decodeFromString(Root.serializer(), navigationFile.readText(Charsets.UTF_8))
@@ -77,6 +78,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         return Root(listOf())
     }
 
+    @Suppress("StringLiteralDuplication")
     public fun render(section: String?) {
         var outputRoot = Path(settings.outputPath)
         var sourcesRoot = Path(settings.sourcesPath)
@@ -115,7 +117,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 relativePath.trim('/')
             }
 
-            val slug = "/" + (((section ?: "") + "/$path").trim('/'))
+            val slug = "/" + ((section ?: "") + "/$path").trim('/')
             val navigation = getNavigation(section).copy(currentPath = slug)
 
             val rendered = if (it.toString().endsWith(".html.peb")) {
