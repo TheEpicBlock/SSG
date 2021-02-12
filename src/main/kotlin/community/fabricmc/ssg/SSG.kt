@@ -130,9 +130,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 val template = getStringTemplate(it.readText(Charsets.UTF_8))
                 val context: MutableMap<String, Any?> = mutableMapOf("body" to null)
 
-                if (navigation != null) {
-                    context["navigation"] = navigation
-                }
+                context["navigation"] = navigation
 
                 val writer = StringWriter()
 

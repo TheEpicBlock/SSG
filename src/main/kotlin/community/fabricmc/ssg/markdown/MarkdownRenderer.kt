@@ -51,7 +51,7 @@ public class MarkdownRenderer(private val ssg: SSG) {
     public val parser: Parser = Parser.builder(settings).extensions(extensions).build()
     public val renderer: HtmlRenderer = HtmlRenderer.builder(settings).extensions(extensions).build()
 
-    public fun render(path: Path, navigation: Root?): String {
+    public fun render(path: Path, navigation: Root): String {
         val text = path.readText(Charsets.UTF_8)
 
         var lines = text.lines()
@@ -87,11 +87,11 @@ public class MarkdownRenderer(private val ssg: SSG) {
 
         val markdownTemplate = ssg.getStringTemplate(lines.joinToString("\n"))
         val markdownWriter = StringWriter()
-        val markdownContext: MutableMap<String, Any> = mutableMapOf("meta" to frontMatter)
 
-        if (navigation != null) {
-            markdownContext["navigation"] = navigation
-        }
+        val markdownContext: MutableMap<String, Any> = mutableMapOf(
+            "meta" to frontMatter,
+            "navigation" to navigation
+        )
 
         markdownTemplate.evaluate(markdownWriter, markdownContext)
 
@@ -100,11 +100,12 @@ public class MarkdownRenderer(private val ssg: SSG) {
 
         val htmlTemplate = ssg.getTemplate(frontMatter.template ?: ssg.settings.defaultTemplate)
         val htmlWriter = StringWriter()
-        val htmlContext: MutableMap<String, Any> = mutableMapOf("body" to rendered, "meta" to frontMatter)
 
-        if (navigation != null) {
-            htmlContext["navigation"] = navigation
-        }
+        val htmlContext: MutableMap<String, Any> = mutableMapOf(
+            "body" to rendered,
+            "meta" to frontMatter,
+            "navigation" to navigation
+        )
 
         htmlTemplate.evaluate(htmlWriter, htmlContext)
 
