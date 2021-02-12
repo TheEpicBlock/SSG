@@ -2,7 +2,6 @@ package community.fabricmc.ssg
 
 import com.charleskorn.kaml.Yaml
 import com.mitchellbosecke.pebble.PebbleEngine
-import com.mitchellbosecke.pebble.loader.StringLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
 import community.fabricmc.ssg.markdown.MarkdownRenderer
