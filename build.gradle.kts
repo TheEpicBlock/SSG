@@ -27,7 +27,9 @@ dependencies {
     implementation("com.github.slugify:slugify:2.4")
     implementation("com.github.ajalt.clikt:clikt:3.1.0")
     implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
+    implementation("io.javalin:javalin:3.13.0")
     implementation("io.pebbletemplates:pebble:3.1.4")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 }
 
 application {

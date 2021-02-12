@@ -4,6 +4,6 @@
     <title>{{ meta.title }}</title>
 </head>
 <body>
-{{ body }}
+{{ body | raw }}
 </body>
 </html>
