@@ -29,7 +29,7 @@ public class ServeCommand : CliktCommand(
     override fun run() {
         val app = Javalin.create { config ->
             config.addStaticFiles(outputPath.path, Location.EXTERNAL)
-        }.start("127.0.0.1", port)
+        }.start("localhost", port)
 
         Runtime.getRuntime().addShutdownHook(Thread() {
             app.stop()
