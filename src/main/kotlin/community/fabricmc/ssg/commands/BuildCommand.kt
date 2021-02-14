@@ -62,11 +62,10 @@ public class BuildCommand : CliktCommand(
                 this@BuildCommand.sections.forEach { section(it) }
             }
 
-            println("Rendering...")
+            println("Rendering...\n")
 
             ssg.render()
 
-            println("")
             println("Done!")
         } catch (e: IllegalStateException) {
             System.err.println(e.message ?: e.toString())

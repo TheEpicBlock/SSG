@@ -1,10 +1,13 @@
 nodes:
   - title: "One"
     path: "/one"
+    icon: "globe"
 
   - title: "Two"
     path: "/two"
+    icon: "arrow-right"
 
     children:
       - title: "Three"
         path: "/two/three"
+        icon: "car"

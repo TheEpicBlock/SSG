@@ -17,6 +17,7 @@ private val ALLOWED_EXTENSIONS = arrayOf("html", "md", "peb")
 @OptIn(ExperimentalPathApi::class)
 public class SSG private constructor(public val settings: SSGBuilder) {
     private val pebble = PebbleEngine.Builder()
+        .cacheActive(false)
         .build()
 
     public val yaml: Yaml = Yaml()
@@ -24,20 +25,28 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
     private val templatePath = Path(settings.templatePath).relativeTo(Path("."))
 
-    public fun getTemplate(name: String): PebbleTemplate {
+    public fun getTemplate(name: String, log: Boolean = true): PebbleTemplate {
         val path = templatePath / "$name.html.peb"
+
+        if (log) {
+            println("    Rendering template: $path")
+        }
 
         return pebble.getTemplate(path.toString())
     }
 
     public fun getStringTemplate(template: String): PebbleTemplate {
-        val tempFile = templatePath / "TEMP.html.peb"
+        val tempFile = templatePath / "temp.html.peb"
+
+        println("    Writing temporary template at $tempFile: ${template.length} chars")
+
+//        println("\n===TEMPLATE CONTENTS===\n$template\n===END TEMPLATE===\n".prependIndent("    "))
 
         tempFile.writeText(template, Charsets.UTF_8)
 
-        val templateObj = getTemplate("TEMP")
+        val templateObj = getTemplate("TEMP", false)
 
-        tempFile.deleteIfExists()
+        tempFile.deleteExisting()
 
         return templateObj
     }
@@ -65,6 +74,8 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
         val navigationFile = sourcesRoot / "navigation.yml"
 
+        println("    Parsing navigation: $navigationFile")
+
         @Suppress("TooGenericExceptionCaught")
         if (navigationFile.exists()) {
             try {
@@ -89,6 +100,15 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
         val sources = getSources(section)
 
+        println(
+            "Found ${sources.size} source files " +
+                    if (section != null) {
+                        "for section: $section."
+                    } else {
+                        "for site root."
+                    }
+        )
+
         if (section != null) {
             outputRoot = outputRoot / section
             sourcesRoot = sourcesRoot / section
@@ -98,8 +118,10 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             outputRoot.createDirectory()
         }
 
-        sources.forEach {
-            var relativePath = it.relativeTo(sourcesRoot).toString()
+        println("    Output root: $outputRoot")
+
+        sources.forEach { source ->
+            var relativePath = source.relativeTo(sourcesRoot).toString()
 
             if (relativePath.endsWith(".peb")) {
                 relativePath = relativePath.substringBeforeLast(".").substringBeforeLast(".")
@@ -124,14 +146,16 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             val slug = "/" + ((section ?: "") + "/$path").trim('/')
             val navigation = getNavigation(section).copy(currentPath = slug)
 
-            val rendered = if (it.toString().endsWith(".html.peb")) {
+            println("    Slug: $slug")
+
+            val rendered = if (source.toString().endsWith(".html.peb")) {
                 outputPath = if (!relativePath.endsWith("index")) {
                     outputRoot / "$relativePath/index.html"
                 } else {
                     outputRoot / "$relativePath.html"
                 }
 
-                val template = getStringTemplate(it.readText(Charsets.UTF_8))
+                val template = getStringTemplate(source.readText(Charsets.UTF_8))
                 val context: MutableMap<String, Any?> = mutableMapOf("body" to null)
 
                 context["navigation"] = navigation
@@ -141,13 +165,16 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 template.evaluate(writer, context)
 
                 writer.toString()
-            } else if (it.extension == "md" || it.toString().endsWith(".md.peb")) {
-                markdown.render(it, navigation)
+            } else if (source.extension == "md" || source.toString().endsWith(".md.peb")) {
+                markdown.render(source, navigation)
             } else {
-                it.readText(Charsets.UTF_8)
+                source.readText(Charsets.UTF_8)
             }
 
+            println("    Writing file: $outputPath")
+
             outputPath.writeText(rendered, Charsets.UTF_8)
+            println("\n")
         }
     }
 
