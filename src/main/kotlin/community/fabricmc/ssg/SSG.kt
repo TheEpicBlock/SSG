@@ -46,7 +46,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
         tempFile.writeText(template, Charsets.UTF_8)
 
-        val templateObj = getTemplate("TEMP", false)
+        val templateObj = getTemplate("temp", false)
 
         tempFile.deleteExisting()
 
