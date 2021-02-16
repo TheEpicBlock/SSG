@@ -1,13 +1,21 @@
 nodes:
-  - title: "One"
+  - type: "node"
+
+    title: "One"
     path: "/one"
     icon: "globe"
 
-  - title: "Two"
+  - type: "spacer"
+
+  - type: "node"
+
+    title: "Two"
     path: "/two"
     icon: "arrow-right"
 
     children:
-      - title: "Three"
+      - type: "node"
+
+        title: "Three"
         path: "/two/three"
         icon: "car"

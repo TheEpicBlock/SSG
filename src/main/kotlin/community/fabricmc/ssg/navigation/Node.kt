@@ -1,16 +1,36 @@
 package community.fabricmc.ssg.navigation
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
-public data class Node(
-    val path: String,
-    val title: String,
-    val icon: String,
+public sealed class Node {
+    @Transient public open val type: String = "unknown"
+}
 
-    val children: List<Node> = listOf(),
-    val description: String? = null
-) {
+@Serializable
+@SerialName("node")
+public class NavigationNode(
+    public val path: String,
+    public val title: String,
+    public val icon: String,
+
+    public val children: List<Node> = listOf(),
+    public val description: String? = null,
+) : Node()  {
+    @Transient public override val type: String = "node"
+
     override fun toString(): String =
-        "Node(path = \"$path\", title = \"$title\", icon = \"$icon\", children = [${children.joinToString(", ")}])"
+        "NavigationNode(path = \"$path\", title = \"$title\", icon = \"$icon\", description = \"$description\", " +
+                "children = [${children.joinToString(", ")}])"
+}
+
+@Serializable
+@SerialName("spacer")
+public class Spacer : Node()  {
+    @Transient public override val type: String = "spacer"
+
+    override fun toString(): String =
+        "Spacer()"
 }

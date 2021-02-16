@@ -1,6 +1,8 @@
 package community.fabricmc.ssg
 
+import com.charleskorn.kaml.PolymorphismStyle
 import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
@@ -20,7 +22,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         .cacheActive(false)
         .build()
 
-    public val yaml: Yaml = Yaml()
+    public val yaml: Yaml = Yaml(configuration = YamlConfiguration(polymorphismStyle = PolymorphismStyle.Property))
     private val markdown = MarkdownRenderer(this)
 
     private val templatePath = Path(settings.templatePath).relativeTo(Path("."))
@@ -86,6 +88,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 } else {
                     "/"
                 }
+
                 error("Failed to parse ${sectionText}navigation.yml: ${e.message ?: e}")
             }
         }
