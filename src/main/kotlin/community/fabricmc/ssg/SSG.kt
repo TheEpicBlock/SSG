@@ -146,7 +146,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 relativePath.trim('/')
             }
 
-            val slug = "/" + ((section ?: "") + "/$path").trim('/')
+            val slug = "/" + ((section ?: "") + "/$path").trim('/').replace('\\', '/')
             val navigation = getNavigation(section).copy(currentPath = slug)
 
             println("    Slug: $slug")
@@ -173,6 +173,8 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             } else {
                 source.readText(Charsets.UTF_8)
             }
+
+            outputPath.normalize().parent.createDirectories()
 
             println("    Writing file: $outputPath")
 

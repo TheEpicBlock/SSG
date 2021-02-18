@@ -28,7 +28,7 @@ import kotlin.io.path.readText
 public class MarkdownRenderer(private val ssg: SSG) {
     private var settings: DataSet = MutableDataSet()
         .set(HtmlRenderer.GENERATE_HEADER_ID, true)
-//        .set(Parser.FENCED_CODE_CONTENT_BLOCK, true)
+        .set(Parser.HTML_BLOCK_DEEP_PARSER, true)
 
         .toImmutable()
 

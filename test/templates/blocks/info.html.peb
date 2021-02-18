@@ -1,0 +1,10 @@
+<article class="message is-info">
+<div class="message-header">
+    <p>{% block title %}Info{% endblock %}</p>
+</div>
+<div class="message-body content">
+
+{% block body %}{% endblock %}
+
+</div>
+</article>
