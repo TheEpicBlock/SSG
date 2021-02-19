@@ -5,7 +5,6 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.loader.FileLoader
-import com.mitchellbosecke.pebble.loader.Loader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
 import community.fabricmc.ssg.markdown.MarkdownRenderer
