@@ -4,10 +4,13 @@ import com.charleskorn.kaml.PolymorphismStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mitchellbosecke.pebble.PebbleEngine
+import com.mitchellbosecke.pebble.loader.FileLoader
+import com.mitchellbosecke.pebble.loader.Loader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
 import community.fabricmc.ssg.markdown.MarkdownRenderer
 import community.fabricmc.ssg.navigation.Root
+import java.io.File
 import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
@@ -18,8 +21,20 @@ private val ALLOWED_EXTENSIONS = arrayOf("html", "md", "peb")
 
 @OptIn(ExperimentalPathApi::class)
 public class SSG private constructor(public val settings: SSGBuilder) {
+    private val pebbleLoader = FileLoader()
+
+    init {
+        pebbleLoader.prefix = Path(settings.templatePath).absolutePathString() + File.separator
+        pebbleLoader.suffix = ".html.peb"
+
+        println("Template loader prefix:    ${pebbleLoader.prefix}")
+        println("Template loader suffix:    ${pebbleLoader.suffix}")
+        println("")
+    }
+
     private val pebble = PebbleEngine.Builder()
         .cacheActive(false)
+        .loader(pebbleLoader)
         .build()
 
     public val yaml: Yaml = Yaml(configuration = YamlConfiguration(polymorphismStyle = PolymorphismStyle.Property))
@@ -28,13 +43,11 @@ public class SSG private constructor(public val settings: SSGBuilder) {
     private val templatePath = Path(settings.templatePath).relativeTo(Path("."))
 
     public fun getTemplate(name: String, log: Boolean = true): PebbleTemplate {
-        val path = templatePath / "$name.html.peb"
-
         if (log) {
-            println("    Rendering template: $path")
+            println("    Rendering template: $name.html.peb")
         }
 
-        return pebble.getTemplate(path.toString())
+        return pebble.getTemplate(name)
     }
 
     public fun getStringTemplate(template: String): PebbleTemplate {

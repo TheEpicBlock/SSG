@@ -13,7 +13,7 @@ suspend fun main(args: Array<String>) {
 }
 ```
 
-{% embed "./blocks/info.html.peb" %}
+{% embed "blocks/info" %}
     {% block title %}Info admonition title!{% endblock %}
 
     {% block body %}

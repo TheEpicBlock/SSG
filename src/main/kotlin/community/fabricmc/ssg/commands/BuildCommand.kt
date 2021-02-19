@@ -44,12 +44,12 @@ public class BuildCommand : CliktCommand(
 
     override fun run() {
         println("== FabriComm Static Site Generator ==")
-        println("Default template: $defaultTemplate")
-        println("Sections:         ${sections.joinToString(", ")}")
+        println("Default template:          $defaultTemplate")
+        println("Sections:                  ${sections.joinToString(", ")}")
         println("")
-        println("Output path:      ${outputPath.path}")
-        println("Sources path:     ${sourcesPath.path}")
-        println("Template path:    ${templatePath.path}")
+        println("Output path:               ${outputPath.path}")
+        println("Sources path:              ${sourcesPath.path}")
+        println("Template path:             ${templatePath.path}")
         println("")
 
         try {
