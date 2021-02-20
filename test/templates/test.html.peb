@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <title>{{ meta.title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
 </head>
 <body>
-{{ body | raw }}
+<main class="content container">
+    {{ body | raw }}
+</main>
 </body>
 </html>

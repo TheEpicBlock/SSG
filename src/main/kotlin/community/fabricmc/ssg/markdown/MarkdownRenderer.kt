@@ -29,6 +29,8 @@ public class MarkdownRenderer(private val ssg: SSG) {
     private var settings: DataSet = MutableDataSet()
         .set(HtmlRenderer.GENERATE_HEADER_ID, true)
         .set(Parser.HTML_BLOCK_DEEP_PARSER, true)
+        .set(Parser.INDENTED_CODE_BLOCK_PARSER, false)
+        .set(TablesExtension.CLASS_NAME, "is-striped is-fullwidth")
 
         .toImmutable()
 

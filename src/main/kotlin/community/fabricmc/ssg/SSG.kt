@@ -9,6 +9,7 @@ import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
 import community.fabricmc.ssg.markdown.MarkdownRenderer
 import community.fabricmc.ssg.navigation.Root
+import community.fabricmc.ssg.templates.SSGExtension
 import java.io.File
 import java.io.StringWriter
 import java.nio.file.Files
@@ -33,6 +34,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
     private val pebble = PebbleEngine.Builder()
         .cacheActive(false)
+        .extension(SSGExtension())
         .loader(pebbleLoader)
         .build()
 
