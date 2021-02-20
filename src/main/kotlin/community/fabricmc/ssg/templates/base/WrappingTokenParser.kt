@@ -48,7 +48,8 @@ public abstract class WrappingTokenParser : TokenParser {
             throw ParserException(
                 null,
                 "$endName tag should be present with $name tag starting line number ",
-                token.lineNumber, stream.filename
+                token.lineNumber,
+                stream.filename
             )
         }
 
