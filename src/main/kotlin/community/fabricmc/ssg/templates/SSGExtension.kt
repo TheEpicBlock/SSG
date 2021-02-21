@@ -11,6 +11,7 @@ public class SSGExtension : AbstractExtension() {
         ButtonsTokenParser(),
         ColumnTokenParser(),
         ColumnsTokenParser(),
+        ImageTokenParser(),
         LevelItemTokenParser(),
         LevelLeftTokenParser(),
         LevelRightTokenParser(),
