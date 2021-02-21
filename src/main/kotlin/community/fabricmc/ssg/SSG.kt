@@ -132,7 +132,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         }
 
         if (!outputRoot.exists()) {
-            outputRoot.createDirectory()
+            outputRoot.createDirectories()
         }
 
         println("    Output root: $outputRoot")
@@ -147,7 +147,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             }
 
             var outputPath = if (!relativePath.endsWith("index")) {
-                (outputRoot / relativePath).createDirectory()
+                (outputRoot / relativePath).createDirectories()
 
                 outputRoot / "$relativePath/index.html"
             } else {
@@ -204,7 +204,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             outputRoot.toFile().deleteRecursively()
         }
 
-        outputRoot.createDirectory()
+        outputRoot.createDirectories()
 
         render(null)
 
