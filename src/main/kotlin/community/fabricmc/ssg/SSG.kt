@@ -161,6 +161,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
             }
 
             val slug = "/" + ((section ?: "") + "/$path").trim('/').replace('\\', '/')
+
             val navigation = getNavigation(section).copy(
                 currentPath = slug,
                 currentExtension = source.toString().split(".", limit = 2).last()

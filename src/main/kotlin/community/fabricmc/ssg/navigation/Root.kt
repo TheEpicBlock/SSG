@@ -9,5 +9,7 @@ public data class Root(
     val currentExtension: String = ".md"  // Filled out later
 ) {
     override fun toString(): String =
-        "Root(currentPath = \"$currentPath\", currentExtension = \"$currentExtension\", nodes = [${nodes.joinToString(", ")}])"
+        "Root(currentPath = \"$currentPath\", currentExtension = \"$currentExtension\", nodes = [${nodes.joinToString(
+            ", "
+        )}])"
 }
