@@ -6,6 +6,7 @@ import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension
 import com.vladsch.flexmark.ext.attributes.AttributesExtension
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension
 import com.vladsch.flexmark.ext.emoji.EmojiExtension
+import com.vladsch.flexmark.ext.emoji.EmojiImageType
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension
 import com.vladsch.flexmark.ext.tables.TablesExtension
@@ -32,6 +33,8 @@ public class MarkdownRenderer(private val ssg: SSG) {
         .set(Parser.INDENTED_CODE_BLOCK_PARSER, false)
 
         .set(EmojiExtension.ROOT_IMAGE_PATH, "/static/images/emoji/")
+        .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.UNICODE_FALLBACK_TO_IMAGE)
+
         .set(TablesExtension.CLASS_NAME, "table is-striped is-fullwidth")
 
         .toImmutable()
