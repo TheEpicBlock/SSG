@@ -51,8 +51,7 @@ public class MarkdownRenderer(private val ssg: SSG) {
         StrikethroughExtension.create(),
         MediaTagsExtension.create(),
         TablesExtension.create(),
-        TocExtension.create(),
-        YouTubeLinkExtension.create()
+        TocExtension.create()
     )
 
     public val parser: Parser = Parser.builder(settings).extensions(extensions).build()
