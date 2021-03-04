@@ -11,7 +11,6 @@ import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension
 import com.vladsch.flexmark.ext.tables.TablesExtension
 import com.vladsch.flexmark.ext.toc.TocExtension
-import com.vladsch.flexmark.ext.wikilink.WikiLinkExtension
 import com.vladsch.flexmark.ext.youtube.embedded.YouTubeLinkExtension
 import com.vladsch.flexmark.html.HtmlRenderer
 import com.vladsch.flexmark.parser.Parser
@@ -53,7 +52,6 @@ public class MarkdownRenderer(private val ssg: SSG) {
         MediaTagsExtension.create(),
         TablesExtension.create(),
         TocExtension.create(),
-        WikiLinkExtension.create(),
         YouTubeLinkExtension.create()
     )
 
