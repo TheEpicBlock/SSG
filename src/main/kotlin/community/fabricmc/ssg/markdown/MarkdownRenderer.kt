@@ -32,6 +32,8 @@ public class MarkdownRenderer(private val ssg: SSG) {
         .set(Parser.HTML_BLOCK_DEEP_PARSER, true)
         .set(Parser.INDENTED_CODE_BLOCK_PARSER, false)
 
+        .set(EmojiExtension.ATTR_IMAGE_CLASS, "emoji")
+        .set(EmojiExtension.ATTR_IMAGE_SIZE, "1rem")
         .set(EmojiExtension.ROOT_IMAGE_PATH, "/static/images/emoji/")
         .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.UNICODE_FALLBACK_TO_IMAGE)
 
