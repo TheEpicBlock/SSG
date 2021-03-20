@@ -56,7 +56,7 @@ public class MarkdownRenderer(private val ssg: SSG) {
     public val parser: Parser = Parser.builder(settings).extensions(extensions).build()
     public val renderer: HtmlRenderer = HtmlRenderer.builder(settings).extensions(extensions).build()
 
-    public fun render(path: Path, navigation: Root): String {
+    public fun render(path: Path, navigation: Root, modifiedTime: String?): String {
         val text = path.readText(Charsets.UTF_8)
 
         var lines = text.lines()
@@ -93,7 +93,8 @@ public class MarkdownRenderer(private val ssg: SSG) {
         val markdownTemplate = ssg.getStringTemplate(lines.joinToString("\n"))
         val markdownWriter = StringWriter()
 
-        val markdownContext: MutableMap<String, Any> = mutableMapOf(
+        val markdownContext: MutableMap<String, Any?> = mutableMapOf(
+            "lastCommit" to modifiedTime,
             "meta" to frontMatter,
             "navigation" to navigation
         )
@@ -106,8 +107,9 @@ public class MarkdownRenderer(private val ssg: SSG) {
         val htmlTemplate = ssg.getTemplate(frontMatter.template ?: ssg.settings.defaultTemplate)
         val htmlWriter = StringWriter()
 
-        val htmlContext: MutableMap<String, Any> = mutableMapOf(
+        val htmlContext: MutableMap<String, Any?> = mutableMapOf(
             "body" to rendered,
+            "lastCommit" to modifiedTime,
             "meta" to frontMatter,
             "navigation" to navigation
         )

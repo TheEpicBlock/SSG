@@ -7,6 +7,8 @@ title: Index
 
 Hello, this is the index page!
 
+**Last commit: {{ lastCommit }}**
+
 ```kotlin
 suspend fun main(args: Array<String>) {
     println("Hello, world!")

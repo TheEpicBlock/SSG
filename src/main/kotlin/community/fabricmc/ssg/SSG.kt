@@ -14,6 +14,10 @@ import java.io.File
 import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.io.path.*
 import kotlin.streams.toList
 
@@ -22,6 +26,7 @@ private val ALLOWED_EXTENSIONS = arrayOf("html", "md", "peb")
 @OptIn(ExperimentalPathApi::class)
 public class SSG private constructor(public val settings: SSGBuilder) {
     private val pebbleLoader = FileLoader()
+    private val dateFormatter = DateTimeFormatter.ofPattern("LLL d, uuuu 'at' HH:mm '(UTC)'", Locale.ENGLISH)
 
     init {
         pebbleLoader.prefix = Path(settings.templatePath).absolutePathString() + File.separator
@@ -138,6 +143,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         println("    Output root: $outputRoot")
 
         sources.forEach { source ->
+            val modifiedTime = getModifiedTime(source)
             var relativePath = source.relativeTo(sourcesRoot).toString()
 
             if (relativePath.endsWith(".peb")) {
@@ -177,7 +183,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 }
 
                 val template = getStringTemplate(source.readText(Charsets.UTF_8))
-                val context: MutableMap<String, Any?> = mutableMapOf("body" to null)
+                val context: MutableMap<String, Any?> = mutableMapOf("body" to null, "lastCommit" to modifiedTime)
 
                 context["navigation"] = navigation
 
@@ -187,7 +193,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
                 writer.toString()
             } else if (source.extension == "md" || source.toString().endsWith(".md.peb")) {
-                markdown.render(source, navigation)
+                markdown.render(source, navigation, modifiedTime)
             } else {
                 source.readText(Charsets.UTF_8)
             }
@@ -214,6 +220,25 @@ public class SSG private constructor(public val settings: SSGBuilder) {
 
         settings.sections.forEach { render(it) }
     }
+
+    @Suppress("TooGenericExceptionCaught", "PrintStackTrace")
+    public fun getModifiedTime(path: Path): String? =
+        try {
+            val date = "git log -1 --pretty=\"format:%cI\" $path".runCommand().trim()
+
+            if (date.isEmpty()) {
+                null
+            } else {
+                val parsedDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(date) { Instant.from(it) }
+
+                dateFormatter.format(parsedDate.atZone(ZoneId.of("UTC")))
+            }
+        } catch (t: Throwable) {
+            println("   !! Failed to parse commit date: $t")
+            t.printStackTrace()
+
+            null
+        }
 
     public companion object {
         public operator fun invoke(builder: SSGBuilder.() -> Unit): SSG {
