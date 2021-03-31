@@ -224,7 +224,9 @@ public class SSG private constructor(public val settings: SSGBuilder) {
     @Suppress("TooGenericExceptionCaught", "PrintStackTrace")
     public fun getModifiedTime(path: Path): String? =
         try {
-            val date = "git log -1 --pretty=\"format:%cI\" $path".runCommand().trim()
+            val date = "git log -1 --pretty=\"format:%cI\" $path".runCommand()
+                .trim()
+                .replace("format:", "")  // Linux-only, it seems
 
             if (date.isEmpty()) {
                 null
@@ -234,7 +236,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
                 dateFormatter.format(parsedDate.atZone(ZoneId.of("UTC")))
             }
         } catch (t: Throwable) {
-            println("   !! Failed to parse commit date: $t")
+            println("    !! Failed to parse commit date: $t")
             t.printStackTrace()
 
             null
