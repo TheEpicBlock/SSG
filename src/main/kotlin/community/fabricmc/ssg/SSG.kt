@@ -226,6 +226,7 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         try {
             val date = "git log -1 --pretty=\"format:%cI\" $path".runCommand()
                 .trim()
+                .trim('"')  // Linux-only, it seems
                 .replace("format:", "")  // Linux-only, it seems
 
             if (date.isEmpty()) {
