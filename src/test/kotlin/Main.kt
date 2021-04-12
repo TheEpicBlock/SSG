@@ -7,6 +7,7 @@ fun main() {
         outputPath = "test/output"
         sourcesPath = "test"
         templatePath = "test/templates"
+        codePath = "test/code"
 
         section("docs")
     }

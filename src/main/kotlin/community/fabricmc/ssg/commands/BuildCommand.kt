@@ -39,6 +39,10 @@ public class BuildCommand : CliktCommand(
         .file(mustExist = true, canBeFile = false, mustBeReadable = true)
         .required()
 
+    public val codePath: File by option(help = "Code path")
+            .file(mustExist = true, canBeFile = false, mustBeReadable = true)
+            .required()
+
     public val sections: List<String> by option("--section", help = "Section names")
         .multiple(required = true)
 
@@ -50,6 +54,7 @@ public class BuildCommand : CliktCommand(
         println("Output path:               ${outputPath.path}")
         println("Sources path:              ${sourcesPath.path}")
         println("Template path:             ${templatePath.path}")
+        println("Code path:                 ${codePath.path}")
         println("")
 
         try {
@@ -58,6 +63,7 @@ public class BuildCommand : CliktCommand(
                 outputPath = this@BuildCommand.outputPath.path
                 sourcesPath = this@BuildCommand.sourcesPath.path
                 templatePath = this@BuildCommand.templatePath.path
+                codePath = this@BuildCommand.codePath.path
 
                 this@BuildCommand.sections.forEach { section(it) }
             }

@@ -11,6 +11,7 @@ public class SSGBuilder {
     public lateinit var outputPath: String
     public lateinit var sourcesPath: String
     public lateinit var templatePath: String
+    public lateinit var codePath: String
 
     private val slugify = Slugify()
 
@@ -25,6 +26,10 @@ public class SSGBuilder {
     }
 
     public fun validate() {
+        if (!::codePath.isInitialized) {
+            error("Code path must be specified.")
+        }
+
         if (!::templatePath.isInitialized) {
             error("Template path must be specified.")
         }
