@@ -18,6 +18,7 @@ repositories {
 	// for more information about repositories.
 }
 
+// SNIPPET "gradle dependencies"
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -30,6 +31,7 @@ dependencies {
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 }
+// ENDSNIPPET
 
 processResources {
 	inputs.property "version", project.version
@@ -90,3 +92,68 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+
+import net.fabricmc.loom.LoomGradleExtension
+import net.fabricmc.loom.task.AbstractLoomTask
+import net.fabricmc.loom.configuration.providers.mappings.MappingsProvider
+import net.fabricmc.loom.util.SourceRemapper;
+import net.fabricmc.mapping.tree.TinyTree;
+import org.cadixdev.lorenz.MappingSet;
+import org.cadixdev.mercury.Mercury;
+import org.cadixdev.mercury.remapper.MercuryRemapper;
+import net.fabricmc.lorenztiny.TinyMappingsReader;
+import java.nio.file.Files;
+
+abstract class IntermediaryTask extends AbstractLoomTask {
+	private java.nio.file.Path inputDir = getProject().file("src/main/java").toPath();
+	private java.nio.file.Path outputDir = getProject().file("intermediarySrc").toPath();
+
+	@Option(option = "input", description = "Java source file directory")
+	public void setInputDir(String inputDir) {
+		this.inputDir = getProject().file(inputDir).toPath();
+	}
+
+	@Option(option = "output", description = "Remapped source output directory")
+	public void setOutputDir(String outputDir) {
+		this.outputDir = getProject().file(outputDir).toPath();
+	}
+
+	@TaskAction
+	def main() {
+		if (!Files.exists(inputDir) || !Files.isDirectory(inputDir)) {
+			throw new IllegalArgumentException("Could not find input directory: " + inputDir.toAbsolutePath());
+		}
+
+		Project project = getProject();
+		println ':loading mappings'
+		LoomGradleExtension extension = getExtension()
+		MappingsProvider mappingsProvider = extension.getMappingsProvider()
+		TinyTree currentMappings = mappingsProvider.getMappings()
+		println ':remapping'
+		Mercury mercury = SourceRemapper.createMercuryWithClassPath(project, false)
+
+		final JavaPluginConvention convention = project.getConvention().findPlugin(JavaPluginConvention.class)
+		final JavaVersion javaVersion = convention != null
+				?
+				convention.getSourceCompatibility()
+				:
+				JavaVersion.current();
+		mercury.setSourceCompatibility(javaVersion.toString())
+
+		mercury.getClassPath().add(extension.getMinecraftMappedProvider().getMappedJar().toPath())
+		mercury.getClassPath().add(extension.getMinecraftMappedProvider().getIntermediaryJar().toPath())
+
+		MappingSet mappings = new TinyMappingsReader(currentMappings, "named", "intermediary").read()
+
+		mercury.getProcessors().add(MercuryRemapper.create(mappings))
+
+		try {
+			mercury.rewrite(inputDir, outputDir);
+		} catch (Exception e) {
+			project.getLogger().warn("Could not remap: ", e);
+		}
+	}
+}
+
+// Create a task using the task type
+tasks.register('toIntermediary', IntermediaryTask)

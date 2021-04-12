@@ -7,6 +7,7 @@ import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.loader.FileLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
 import community.fabricmc.ssg.builders.SSGBuilder
+import community.fabricmc.ssg.code.collectSnippets
 import community.fabricmc.ssg.markdown.MarkdownRenderer
 import community.fabricmc.ssg.navigation.Root
 import community.fabricmc.ssg.templates.SSGExtension
@@ -215,6 +216,8 @@ public class SSG private constructor(public val settings: SSGBuilder) {
         }
 
         outputRoot.createDirectories()
+
+        val snippets = collectSnippets(settings.codePath)
 
         render(null)
 
